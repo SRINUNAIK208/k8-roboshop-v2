@@ -22,7 +22,7 @@ metadata:
   labels:
     component: payment
     project: roboshop
-    tier: app
+    tier: backend
 type: Opaque
 data:
   AMQP_USER: "cm9ib3Nob3A="
@@ -30,7 +30,7 @@ data:
 ---
  
 
-apiVersion: v1 
+apiVersion: apps/v1 
 kind: Deployment
 metadata:
   name: payment
@@ -40,13 +40,13 @@ metadata:
     component: payment
     tier: backend
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       project: roboshop
       component: payment
       tier: backend
-  templates:
+  template:
     metadata:
       labels:
         project: roboshop

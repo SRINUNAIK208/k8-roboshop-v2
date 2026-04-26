@@ -9,11 +9,11 @@ metadata:
     tier: backend
 data:
   MONGO: "true" 
-  MONGO_URL: "catalogue://catalogue:27017/catalogue"
+  MONGO_URL: "mongodb://mongodb:27017/catalogue"
 ---
  
 
-apiVersion: v1 
+apiVersion: apps/v1 
 kind: Deployment
 metadata:
   name: catalogue
@@ -29,7 +29,7 @@ spec:
       project: roboshop
       component: catalogue
       tier: backend
-  templates:
+  template:
     metadata:
       labels:
         project: roboshop

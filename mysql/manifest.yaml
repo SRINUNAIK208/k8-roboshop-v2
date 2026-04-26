@@ -12,7 +12,7 @@ data:
   MYSQL_ROOT_PASSWORD: "Um9ib1Nob3BAMQ=="
     
 ---
-apiVersion: v1 
+apiVersion: apps/v1 
 kind: Deployment
 metadata: 
   name: mysql
@@ -22,13 +22,13 @@ metadata:
     component: mysql
     tier: database
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
        project: roboshop
        component: mysql
        tier: database
-  templates:
+  template:
     metadata:
       labels:
         project: roboshop
@@ -46,6 +46,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: mysql
+  namespace: roboshop
   labels:
      project: roboshop
      component: mysql
