@@ -1,0 +1,71 @@
+apiVersion: v1 
+kind: StorageClass
+metadata:
+  name: efs-dynamic
+provisioner: efs.csi.aws.com
+parameters:
+  provisioningMode: efs-dynamic
+  fileSystemId:
+  basePath: "/roboshop"
+reclaimPolicy: Retain
+volumeBindingMode: Immediate
+
+---
+apiVersion: v1 
+kind: PersistantVoulmeClaim 
+metadata:
+  name: efs-dynamic
+spec:
+  accesModes:
+  - ReadWriteonce
+  storageClassName: efs-dynamic
+  resources:
+    requests:
+      storage: 5Gi
+---
+apiVersion: apps/v1 
+kind: Deployment
+metadata:
+ name: nginx
+ labels:
+   purpose: demo
+   component: nginx
+spec:
+ replicas: 1
+ selector:
+   matchLabels:
+    purpose: demo
+    component: nginx
+ template:
+   metadata:
+     labels:
+      purpose: demo
+      component: nginx
+   spec:
+     containers:
+      - name: nginx
+        image: nginx
+        volumeMount:
+        - name: efs-storage
+          mountPath: /usr/share/nginx/html
+     volumes:
+       name: efs-storage
+       PersistantVoulmeClaim:
+            claimName: efs-dynamic
+---
+apiVersion: v1 
+kind: Service 
+metadata:
+  name: nginx-svc 
+spec:
+  selector:
+    purpose: demo
+    component: nginx
+  ports:
+  - protocol: TCP 
+    port: 80 
+    targetPort: 8080
+ 
+
+  
+

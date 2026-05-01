@@ -42,6 +42,14 @@ spec:
        envFrom:
        - configMapRef:
            name: catalogue
+       resources:
+         requests:
+           cpu:
+           memory:
+         limites:
+           cpu:
+           memory:
+
 
 ---
 apiVersion: v1 
@@ -63,3 +71,27 @@ spec:
     port: 8080
     targetPort: 8080
       
+---
+apiVersion: 
+kind: HorizontalPodAutoScaler
+metadata:
+  name: catalogue
+  labels:
+    project: roboshop
+    component: catalogue
+    tier: backend
+spec:
+  targetScaleRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: catalogue
+  minReplicas: 1
+  maxReplicas: 10
+  metrics:
+  - type: Resource 
+    resource:
+      name: cpu
+      target:
+        type: Utilization
+        averageUtilization: 10
+    

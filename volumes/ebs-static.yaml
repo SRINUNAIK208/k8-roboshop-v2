@@ -1,0 +1,72 @@
+apiVersion: v1 
+kind: PersistentVolume
+metadata:
+  name: ebs-static
+spec:
+  accessMode:
+  - ReadWriteonce
+  capacity:
+    storage: 20Gi
+  csi:
+    driver: ebs.csi.aws.com 
+    fsType: ext4 
+    voulmeHandle: 
+---
+apiVersion: v1 
+kind: PersistentVolumeClaim
+metadata:
+  name: ebs-static
+spec:
+  accessMode:
+  - readwriteonce
+  voulmeName:
+     name: ebs-static
+  resources:
+    requests:
+      storage: 5Gi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx
+spec:
+  nodeType:
+    
+  replicas: 1
+  selector:
+    matchLabels:
+      purpose: demo
+      component: nginx
+  template:
+    metadata:
+      labels:
+        purpose: demo
+        component: nginx
+    spec: 
+      containers:
+      - name: nginx
+        image: nginx
+        volumeMounts:
+        -  name: ebs-storage
+           mountPath: /usr/share/nginx/html 
+      volumes:
+      - name: ebs-storage
+        persistentVolumeClaim:
+         claimName: ebs-static
+---
+apiVersion: v1 
+kind: Service
+metadata:
+  name: nginx-svc 
+spec:
+  selector:
+    purpose: demo
+    component: nginx
+  ports:
+  - protocol: TCP 
+    port: 80
+    targetPort: 80
+
+  
+
+

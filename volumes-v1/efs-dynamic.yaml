@@ -1,0 +1,43 @@
+apiVersion: storage.k8.io/v1
+kind: StorageClass
+metadata:
+  name: efs-dynamic
+provisioner: efs.csi.aws.com
+reclaimPolicy: Retain
+parameters:
+  provisioningMode: efs-dynamic
+  fileSystemId:
+  basePath: "/roboshop"
+volumeBindingMode: Immediate
+
+---
+
+apiVersion: v1
+kind: PersistantVoulmeClaim
+metadata:
+  name: efs-dynamic
+spec:
+ storageClass: efs-dynamic
+ accesModes:
+ - ReadWriteMany
+ resources:
+   requests:
+     storage: 2Gi 
+---
+apiVersion: v1 
+kind: Pod 
+metadata:
+  name: nginx
+spec:
+  containers:
+  - name: nginx
+    image: nginx
+    volumeMounts:
+    - name: efs-storage
+      mountPath: /usr/share/nginx/html
+  volumes:
+  - name: efs-storage
+    persistentVolumeClaim:
+      claimName: efs-dynamic
+
+ 

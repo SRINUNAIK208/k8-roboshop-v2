@@ -1,0 +1,35 @@
+apiVersion: storage.k8.io/v1
+kind: StorageClass
+metadata:
+  name: ebs-dynamic
+provisioner: ebs.csi.aws.com
+reclaimPolicy: Retain
+volumeBindingMode: waitForFirstConsumer
+---
+apiVersion: v1 
+kind: PersistantVoulmeClaim
+metadata:
+  name: ebs-dynamic
+spec:
+  accesModes:
+  - ReadWriteonce
+  storageClassName: ebs-dynamic
+  resources:
+    requests:
+      storage: 3Gi
+---
+apiVersion: v1 
+kind: Pod 
+metadata:
+  name: nginx
+spec:
+ containers:
+ - name: nginx
+   image: nginx
+   volumeMounts:
+   - name: ebs-storage
+     mountPath: /usr/share/nginx/html
+ volumes:
+ - name: ebs-storage
+   persistentVolumeClaim:
+     claimName: ebs-dynamic
